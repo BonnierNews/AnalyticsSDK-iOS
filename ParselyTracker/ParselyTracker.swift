@@ -15,7 +15,6 @@ public class Parsely {
     private var configured = false
     private var flushTimer: Timer?
     private var flushInterval: TimeInterval = 30
-    private var backgroundFlushTask: UIBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
     private var active: Bool = true
     public var secondsBetweenHeartbeats: TimeInterval? {
         get {
@@ -218,26 +217,14 @@ public class Parsely {
         os_log("Stopping execution before background/inactive/terminate", log:OSLog.tracker, type:.info)
         hardShutdown()
         
-        DispatchQueue.global(qos: .userInitiated).async{
-            let _self = self
-            _self.backgroundFlushTask = UIApplication.shared.beginBackgroundTask(expirationHandler:{
-                _self.endBackgroundFlushTask()
-            })
-            os_log("Flushing queue in background", log:OSLog.tracker, type:.info)
-            _self.track.sendHeartbeats()
-            _self.flush()
-            _self.endBackgroundFlushTask()
-        }
+        os_log("Flushing queue in background", log:OSLog.tracker, type:.info)
+        track.sendHeartbeats()
+        flush()
     }
     
     internal func hardShutdown() {
         pauseFlushTimer()
         track.pause()
-    }
-    
-    private func endBackgroundFlushTask() {
-        UIApplication.shared.endBackgroundTask(self.backgroundFlushTask)
-        self.backgroundFlushTask = UIBackgroundTaskIdentifier.invalid
     }
 }
 
