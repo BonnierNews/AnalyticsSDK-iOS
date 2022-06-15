@@ -39,9 +39,9 @@ class EngagedTime: Sampler {
     
     func endInteraction() {
         os_log("Ending Interaction", log: OSLog.tracker, type: .debug)
-        accumulators.forEach { (url, _) in
-            guard accumulators[url] != nil else {
-                os_log("No accumulator found for %s, skipping endInteraction", log: OSLog.tracker, type: .debug, url)
+        for (url, _) in accumulators {
+            guard var _ = accumulators[url] else {
+                os_log("No accumulator found for %s, skipping endInteraction", log: OSLog.tracker, type:.debug, url)
                 return
             }
             accumulators[url]?.isEngaged = false

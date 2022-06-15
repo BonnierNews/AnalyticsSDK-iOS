@@ -6,7 +6,7 @@ class EventQueueTests: ParselyTestCase {
     
     override func setUp() {
         super.setUp()
-        for i:Int in 0...30 {
+        for i in 0...30 {
             self.queue.push(i)
         }
     }
