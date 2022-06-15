@@ -218,16 +218,13 @@ public class Parsely {
         os_log("Stopping execution before background/inactive/terminate", log:OSLog.tracker, type:.info)
         hardShutdown()
         
-        DispatchQueue.global(qos: .userInitiated).async{
-            let _self = self
-            _self.backgroundFlushTask = UIApplication.shared.beginBackgroundTask(expirationHandler:{
-                _self.endBackgroundFlushTask()
-            })
-            os_log("Flushing queue in background", log:OSLog.tracker, type:.info)
-            _self.track.sendHeartbeats()
-            _self.flush()
-            _self.endBackgroundFlushTask()
+        backgroundFlushTask = UIApplication.shared.beginBackgroundTask() { [weak self] in
+            self?.endBackgroundFlushTask()
         }
+        os_log("Flushing queue in background", log:OSLog.tracker, type:.info)
+        track.sendHeartbeats()
+        flush()
+        endBackgroundFlushTask()
     }
     
     internal func hardShutdown() {

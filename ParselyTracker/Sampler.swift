@@ -129,8 +129,7 @@ class Sampler {
         self.samplerTimer = Timer.scheduledTimer(withTimeInterval: SAMPLE_RATE, repeats: false) { timer in self.sample() }
     }
     
-    private func getHeartbeatInterval(existingTimeout: TimeInterval,
-                                      totalTrackedTime: TimeInterval) -> TimeInterval
+    private func getHeartbeatInterval(totalTrackedTime: TimeInterval) -> TimeInterval
     {
         let totalWithOffset: TimeInterval = totalTrackedTime + offsetMatchingBaseInterval
         let newInterval: TimeInterval = totalWithOffset * backoffProportion
@@ -151,7 +150,6 @@ class Sampler {
         trackedData.accumulatedTime = 0
         let totalTrackedTime: TimeInterval = Date().timeIntervalSince(trackedData.firstSampleTime!);
         trackedData.heartbeatTimeout = self.getHeartbeatInterval(
-            existingTimeout: trackedData.heartbeatTimeout!,
             totalTrackedTime: totalTrackedTime)
         updateAccumulator(acc: trackedData)
         self.heartbeatInterval = trackedData.heartbeatTimeout!
